@@ -1,420 +1,243 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>MiniTube — seu "YouTube" de mentirinha</title>
-<style>
-  :root{
-    --bg:#0f1724; --card:#0b1220; --muted:#98a0b3; --accent:#ff4500;
-    --glass: rgba(255,255,255,0.03);
-    font-family: Inter, system-ui, "-apple-system", "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:linear-gradient(180deg,#061124 0%, #07192a 100%);color:#e6eef8;min-height:100vh}
-  header{display:flex;align-items:center;gap:16px;padding:14px 20px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent)}
-  .logo{font-weight:700;font-size:1.15rem;display:flex;gap:8px;align-items:center}
-  .logo .dot{width:12px;height:12px;background:var(--accent);border-radius:3px;transform:skewX(-10deg)}
-  .search {margin-left:auto;display:flex;gap:8px;align-items:center}
-  .search input{padding:8px 12px;border-radius:8px;border:0;background:var(--glass);color:inherit;min-width:220px}
-  .btn{background:var(--accent);padding:8px 12px;border-radius:8px;border:0;color:white;font-weight:600;cursor:pointer}
-  .container{max-width:1100px;margin:20px auto;padding:0 16px}
-  .topbar{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
-  .uploader{background:var(--card);padding:12px;border-radius:12px;display:flex;gap:12px;align-items:center}
-  .uploader input[type="file"]{display:none}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-  .video-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:10px;border-radius:10px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-  .thumb{width:100%;height:150px;background:#001;display:block;border-radius:8px;object-fit:cover}
-  .meta{display:flex;justify-content:space-between;align-items:flex-start;margin-top:8px;gap:8px}
-  .meta .info{max-width:calc(100% - 90px)}
-  .meta h3{margin:0;font-size:0.98rem}
-  .meta p{margin:6px 0 0;color:var(--muted);font-size:0.85rem}
-  .actions{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
-  .like{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px 8px;border-radius:8px;cursor:pointer;color:var(--muted)}
-  .play-btn{width:100%;margin-top:8px;padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.06);cursor:pointer;color:inherit}
-  /* modal */
-  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:60;padding:18px}
-  .modal.show{display:flex}
-  .player{width:min(1100px,96%);background:#071126;border-radius:12px;padding:16px;box-shadow:0 20px 60px rgba(2,6,23,0.7)}
-  .player video{width:100%;height:520px;background:black;border-radius:8px;display:block}
-  .player .row{display:flex;gap:12px;margin-top:10px;align-items:center;justify-content:space-between}
-  .comments{margin-top:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:10px;border-radius:8px}
-  .comment{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:0.95rem}
-  .small{font-size:0.85rem;color:var(--muted)}
-  .empty{opacity:0.6}
-  footer{max-width:1100px;margin:28px auto;color:var(--muted);text-align:center;font-size:0.9rem}
-  @media(max-width:640px){
-    .player video{height:260px}
-    .thumb{height:140px}
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fenix Consultoria — Soluções Imobiliárias</title>
+
+  <!-- Fonte -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#05060a;
+      --card:#0f1116;
+      --muted:#bfc7d2;
+      --gold:#d4af37;
+      --accent:linear-gradient(90deg, rgba(212,175,55,0.95), rgba(182,139,45,0.95));
+      --glass: rgba(255,255,255,0.03);
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#eef2f7;line-height:1.5;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    header{position:fixed;top:0;left:0;right:0;z-index:60;background:rgba(5,6,10,0.6);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
+    .nav{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:14px 16px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:700}
+    .brand .mark{width:36px;height:36px;border-radius:8px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#0b0b0b;font-weight:800;box-shadow:0 8px 30px rgba(212,175,55,0.12)}
+    nav{margin-left:auto;display:flex;gap:12px;align-items:center}
+    nav a{padding:8px 12px;border-radius:8px;font-weight:600;color:var(--muted)}
+    nav a:hover{color:#fff;background:var(--glass)}
+    .cta{background:var(--gold);color:#0b0b0b;padding:8px 12px;border-radius:8px;font-weight:700}
+    main{max-width:1100px;margin:110px auto 80px;padding:0 16px}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center}
+    .hero .kicker{color:var(--gold);font-weight:800;letter-spacing:0.06em}
+    .hero h1{font-size:2.1rem;margin:8px 0 10px}
+    .hero p{color:var(--muted);margin:0 0 18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:14px;border-radius:12px;box-shadow:0 12px 40px rgba(3,6,12,0.6);border:1px solid rgba(255,255,255,0.03)}
+    .hero-visual{border-radius:10px;overflow:hidden;height:260px;background:linear-gradient(180deg,#0b0f14,#07101a);display:flex;align-items:center;justify-content:center}
+    .hero-visual h3{color:var(--gold);font-size:1.1rem;margin:0}
+    /* Sobre/Serviços layout */
+    section{margin-top:28px}
+    .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .service{padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);border:1px solid rgba(255,255,255,0.02)}
+    .service h4{margin:0 0 8px;color:var(--gold)}
+    .service p{margin:0;color:var(--muted)}
+    /* Contato */
+    .contact-row{display:flex;gap:16px;flex-wrap:wrap;align-items:center}
+    .contact-card{flex:1;min-width:220px}
+    .contact-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn-ws{background:linear-gradient(90deg,#25D366,#1FAF53);color:#042013;padding:10px 14px;border-radius:10px;font-weight:700}
+    .btn-mail{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:10px;color:var(--muted);font-weight:700}
+    footer{margin-top:36px;padding:18px 0;text-align:center;color:var(--muted);font-size:0.9rem}
+    /* responsive */
+    @media(max-width:920px){
+      .hero{grid-template-columns:1fr}
+      .hero-visual{height:200px}
+      nav{display:none}
+    }
+    @media(max-width:520px){
+      .hero h1{font-size:1.5rem}
+    }
+
+    /* smooth scroll highlight */
+    .active-link{color:#fff;background:rgba(255,255,255,0.04)}
+    /* small helper */
+    .muted{color:var(--muted)}
+  </style>
 </head>
 <body>
+
   <header>
-    <div class="logo"><span class="dot"></span> MiniTube</div>
-    <div class="search" role="search">
-      <input id="searchInput" placeholder="Pesquisar vídeos..." aria-label="Pesquisar vídeos" />
-      <button id="searchBtn" class="btn">Buscar</button>
+    <div class="nav">
+      <div class="brand">
+        <div class="mark">F</div>
+        <div>
+          <div style="font-weight:800">Fenix Consultoria</div>
+          <div style="font-size:0.85rem;color:var(--muted)">Soluções em assuntos imobiliários</div>
+        </div>
+      </div>
+
+      <nav id="topnav" aria-label="Navegação principal">
+        <a href="#home" data-target="home">Home</a>
+        <a href="#sobre" data-target="sobre">Sobre</a>
+        <a href="#servicos" data-target="servicos">Serviços</a>
+        <a href="#contato" data-target="contato">Contato</a>
+        <a class="cta" href="#contato">Entrar em contato</a>
+      </nav>
     </div>
   </header>
 
-  <main class="container" id="app">
-    <div class="topbar">
-      <div class="uploader" title="Fazer upload de um vídeo">
-        <label for="fileUpload" class="btn" style="cursor:pointer">Carregar vídeo</label>
-        <input id="fileUpload" type="file" accept="video/*,image/*" />
-        <div class="small" id="uploadHint">Envie um arquivo .mp4, .webm ou imagem de capa.</div>
+  <main>
+    <!-- HOME -->
+    <section id="home" class="hero">
+      <div>
+        <div class="kicker">Fênix Consultoria</div>
+        <h1>Excelência em aprovação de projetos e soluções imobiliárias</h1>
+        <p class="muted">Ajudamos proprietários, construtoras e incorporadoras a levar projetos do papel à aprovação com eficiência técnica, legal e estratégica.</p>
+
+        <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
+          <a class="btn-ws" href="https://wa.me/5511954729752" target="_blank" rel="noreferrer">WhatsApp: +55 11 95472-9752</a>
+          <a class="btn-mail" href="mailto:contato@fenixconsultoria.com.br">contato@fenixconsultoria.com.br</a>
+        </div>
+
+        <div style="margin-top:22px;display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+          <div class="card" style="display:flex;flex-direction:column;gap:6px">
+            <strong style="color:var(--gold)">Atuação</strong>
+            <div class="muted">Aprovação de projetos, regularização e assessoria imobiliária.</div>
+          </div>
+          <div class="card" style="display:flex;flex-direction:column;gap:6px">
+            <strong style="color:var(--gold)">Experiência</strong>
+            <div class="muted">Profissionais especializados e alto índice de sucesso em aprovações.</div>
+          </div>
+        </div>
       </div>
 
-      <div style="margin-left:auto;color:var(--muted)">Simulação local — vídeos não são enviados a nenhum servidor.</div>
-    </div>
-
-    <section>
-      <h2>Vídeos</h2>
-      <div class="grid" id="videoGrid" aria-live="polite">
-        <!-- cards gerados por JS -->
+      <div class="card hero-visual" aria-hidden="true">
+        <h3>Projetos aprovados • Assessoria técnica • Entrega com segurança</h3>
       </div>
     </section>
+
+    <!-- SOBRE -->
+    <section id="sobre">
+      <h2>Sobre</h2>
+      <div class="card" style="margin-top:12px">
+        <p class="muted" style="margin:0">
+          Fundada para oferecer suporte técnico e estratégico na área imobiliária, a Fênix Consultoria atua na aprovação de projetos, análise de viabilidade, regularização fundiária e soluções para empreendimentos. Nossos profissionais combinam conhecimento técnico com experiência prática para reduzir prazos e custos.
+        </p>
+      </div>
+    </section>
+
+    <!-- SERVIÇOS -->
+    <section id="servicos">
+      <h2 style="margin-top:18px">Serviços</h2>
+      <div class="grid-3" style="margin-top:12px">
+        <div class="service card">
+          <h4>Aprovação de Projetos</h4>
+          <p class="muted">Coordenação do processo de aprovação junto aos órgãos competentes, análise de conformidade e encaminhamento técnico.</p>
+        </div>
+
+        <div class="service card">
+          <h4>Regularização Imobiliária</h4>
+          <p class="muted">Regularização de imóveis, loteamentos e documentação para fins de venda ou financiamento.</p>
+        </div>
+
+        <div class="service card">
+          <h4>Assessoria Técnica</h4>
+          <p class="muted">Consultoria estratégica para otimização de projetos, estudo de viabilidade e mitigação de riscos.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section id="contato">
+      <h2 style="margin-top:18px">Contato</h2>
+
+      <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:12px">
+        <div class="card contact-card">
+          <h3 style="margin:0 0 8px">Fale conosco</h3>
+          <p class="muted" style="margin:0 0 12px">Atendimento via WhatsApp ou e-mail. Resposta em horário comercial.</p>
+
+          <div class="contact-actions">
+            <a class="btn-ws" href="https://wa.me/5511954729752" target="_blank" rel="noreferrer">Enviar mensagem (WhatsApp)</a>
+            <a class="btn-mail" href="mailto:contato@fenixconsultoria.com.br">Enviar e-mail</a>
+          </div>
+
+          <div style="margin-top:12px;color:var(--muted);font-size:0.92rem">
+            <div><strong>Telefone:</strong> +55 11 95472-9752</div>
+            <div><strong>E-mail:</strong> contato@fenixconsultoria.com.br</div>
+          </div>
+        </div>
+
+        <div class="card" style="flex:1;min-width:300px">
+          <h3 style="margin:0 0 8px">Solicite uma avaliação</h3>
+          <form id="leadForm">
+            <div style="display:grid;gap:8px">
+              <input type="text" id="name" placeholder="Seu nome" required style="padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit">
+              <input type="tel" id="phone" placeholder="Telefone (ou WhatsApp)" style="padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit">
+              <textarea id="message" rows="4" placeholder="Breve descrição do projeto" style="padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit"></textarea>
+              <div style="display:flex;gap:8px;justify-content:flex-end">
+                <button type="submit" class="cta" style="cursor:pointer">Enviar</button>
+              </div>
+            </div>
+          </form>
+
+          <div id="leadMsg" style="margin-top:10px;color:var(--muted);font-size:0.95rem"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="ano"></span> Fenix Consultoria — Todos os direitos reservados.
+    </footer>
   </main>
 
-  <!-- Modal do player -->
-  <div id="modal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="videoTitle">
-    <div class="player" role="document">
-      <video id="playerVideo" controls preload="metadata"></video>
-      <div class="row">
-        <div>
-          <h3 id="videoTitle" style="margin:0"></h3>
-          <p id="videoDesc" class="small"></p>
-        </div>
-        <div style="text-align:right">
-          <button id="modalLike" class="like">Curtir (<span id="modalLikeCount">0</span>)</button>
-          <button id="closeModal" class="btn" style="margin-left:8px">Fechar</button>
-        </div>
-      </div>
-
-      <div class="comments" aria-live="polite">
-        <strong>Comentários</strong>
-        <div id="commentsList" style="margin-top:8px;max-height:220px;overflow:auto"></div>
-
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <input id="commentInput" placeholder="Escreva um comentário..." style="flex:1;padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit">
-          <button id="sendComment" class="btn">Enviar</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer>MiniTube — Projeto de estudo. Dados salvos apenas no seu navegador (localStorage).</footer>
-
 <script>
-/*
-  MiniTube — script principal
-  - Mantém uma lista de vídeos em localStorage (id, title, desc, url, thumb, likes, comments)
-  - Permite adicionar via input file (usa URL.createObjectURL para rodar localmente)
-  - Busca por título
-  - Reproduz em modal e salva likes/comentários no localStorage
-*/
+  // preencher ano
+  document.getElementById('ano').textContent = new Date().getFullYear();
 
-// --- helpers
-const $ = sel => document.querySelector(sel);
-const byId = id => document.getElementById(id);
-
-function uid() {
-  return 'v_' + Math.random().toString(36).slice(2,9);
-}
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem('minitube_state');
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch(e){ console.error(e); return null; }
-}
-
-function saveState(state) {
-  localStorage.setItem('minitube_state', JSON.stringify(state));
-}
-
-// --- estado inicial (exemplos)
-let state = loadState();
-if (!state) {
-  state = {
-    videos: [
-      // Vídeos de exemplo. Você pode substituir "url" por caminhos locais "videos/exemplo.mp4"
-      {
-        id: uid(),
-        title: 'QUEM LEU É VIADO',
-        desc: 'Vídeo de demonstração. Use seus próprios arquivos com "Carregar vídeo".',
-        url: '', // vazio para demo sem vídeo real
-        thumb: '', // usar placeholder
-        likes: 4,
-        comments: [{text:'Delicia', when:Date.now()-1000*60*60}],
-      },
-      {
-        id: uid(),
-        title: 'Aula de JavaScript — Introdução',
-        desc: 'Pequena introdução ao JS.',
-        url: '',
-        thumb: '',
-        likes: 8,
-        comments: [{text:'Muito útil, valeu!', when:Date.now()-1000*60*60*24}],
+  // smooth scroll para nav links
+  document.querySelectorAll('nav a, a[href^="#"]').forEach(el => {
+    el.addEventListener('click', (e) => {
+      const target = el.getAttribute('href');
+      if (target && target.startsWith('#')) {
+        e.preventDefault();
+        const node = document.querySelector(target);
+        if (node) node.scrollIntoView({behavior:'smooth', block:'start'});
       }
-    ]
-  };
-  saveState(state);
-}
-
-// --- render
-const videoGrid = byId('videoGrid');
-
-function createThumbElement(video) {
-  const card = document.createElement('article');
-  card.className = 'video-card';
-  card.setAttribute('tabindex','0');
-
-  const thumb = document.createElement('div');
-  thumb.style.height = '150px';
-  thumb.style.borderRadius = '8px';
-  thumb.style.overflow = 'hidden';
-  thumb.style.display = 'flex';
-  thumb.style.alignItems = 'center';
-  thumb.style.justifyContent = 'center';
-  thumb.style.background = '#02111a';
-  thumb.className = 'thumb';
-
-  if (video.thumb) {
-    const img = document.createElement('img');
-    img.src = video.thumb;
-    img.alt = video.title;
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.objectFit = 'cover';
-    thumb.appendChild(img);
-  } else if (video.url) {
-    const vid = document.createElement('video');
-    vid.src = video.url;
-    vid.muted = true;
-    vid.playsInline = true;
-    vid.autoplay = true;
-    vid.loop = true;
-    vid.style.width = '100%';
-    vid.style.height = '100%';
-    vid.style.objectFit = 'cover';
-    thumb.appendChild(vid);
-  } else {
-    thumb.innerHTML = '<div style="text-align:center;padding:12px;color:var(--muted)"><strong>Sem capa</strong><div class="small">Adicione uma imagem ou vídeo</div></div>';
-  }
-
-  const meta = document.createElement('div');
-  meta.className = 'meta';
-
-  const info = document.createElement('div');
-  info.className = 'info';
-  const h3 = document.createElement('h3');
-  h3.textContent = video.title;
-  const p = document.createElement('p');
-  p.textContent = video.desc;
-  info.appendChild(h3); info.appendChild(p);
-
-  const actions = document.createElement('div');
-  actions.className = 'actions';
-  const likeBtn = document.createElement('button');
-  likeBtn.className = 'like';
-  likeBtn.textContent = 'Curtir (' + (video.likes||0) + ')';
-  likeBtn.onclick = (e) => {
-    e.stopPropagation();
-    video.likes = (video.likes||0) + 1;
-    likeBtn.textContent = 'Curtir (' + video.likes + ')';
-    saveState(state);
-  };
-
-  const playBtn = document.createElement('button');
-  playBtn.className = 'play-btn';
-  playBtn.textContent = 'Reproduzir';
-  playBtn.onclick = () => openModal(video.id);
-
-  actions.appendChild(likeBtn);
-  actions.appendChild(playBtn);
-
-  meta.appendChild(info);
-  meta.appendChild(actions);
-
-  card.appendChild(thumb);
-  card.appendChild(meta);
-
-  // abrir com Enter
-  card.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Enter') openModal(video.id);
+    });
   });
 
-  // clique no card também abre
-  card.addEventListener('click', () => openModal(video.id));
-
-  return card;
-}
-
-function renderGrid(filter = '') {
-  videoGrid.innerHTML = '';
-  const list = state.videos.filter(v => v.title.toLowerCase().includes(filter.toLowerCase()));
-  if (list.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'empty';
-    empty.style.color = 'var(--muted)';
-    empty.textContent = 'Nenhum vídeo encontrado.';
-    videoGrid.appendChild(empty);
-    return;
+  // highlight nav (simples)
+  const sections = Array.from(document.querySelectorAll('section[id]'));
+  const navLinks = Array.from(document.querySelectorAll('nav a'));
+  function onScroll(){
+    const y = window.scrollY;
+    let current = sections[0].id;
+    for (const s of sections){
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    }
+    navLinks.forEach(a => {
+      a.classList.toggle('active-link', a.getAttribute('href') === '#' + current);
+    });
   }
-  for (const v of list) {
-    videoGrid.appendChild(createThumbElement(v));
-  }
-}
+  window.addEventListener('scroll', onScroll);
+  onScroll();
 
-// --- modal / player
-const modal = byId('modal');
-const playerVideo = byId('playerVideo');
-const videoTitle = byId('videoTitle');
-const videoDesc = byId('videoDesc');
-const modalLike = byId('modalLike');
-const modalLikeCount = byId('modalLikeCount');
-const commentsList = byId('commentsList');
-const commentInput = byId('commentInput');
-const sendComment = byId('sendComment');
-
-let currentVideoId = null;
-
-function openModal(id) {
-  const vid = state.videos.find(v=>v.id===id);
-  if(!vid) return;
-  currentVideoId = id;
-  videoTitle.textContent = vid.title;
-  videoDesc.textContent = vid.desc;
-  modalLikeCount.textContent = vid.likes||0;
-  modalLike.onclick = () => {
-    vid.likes = (vid.likes||0) + 1;
-    modalLikeCount.textContent = vid.likes;
-    saveState(state);
-    renderGrid(byId('searchInput').value);
-  };
-
-  // load source: if url exists use it, else show poster if available
-  if (vid.url) {
-    playerVideo.src = vid.url;
-    playerVideo.poster = '';
-  } else if (vid.thumb) {
-    playerVideo.src = '';
-    playerVideo.poster = vid.thumb;
-  } else {
-    playerVideo.src = '';
-    playerVideo.poster = '';
-  }
-
-  // render comments
-  renderComments();
-
-  modal.classList.add('show');
-  modal.setAttribute('aria-hidden','false');
-  playerVideo.focus();
-}
-
-function closeModal() {
-  modal.classList.remove('show');
-  modal.setAttribute('aria-hidden','true');
-  playerVideo.pause();
-  playerVideo.src = '';
-  currentVideoId = null;
-}
-
-function renderComments() {
-  commentsList.innerHTML = '';
-  const vid = state.videos.find(v=>v.id===currentVideoId);
-  if(!vid) return;
-  const list = vid.comments || [];
-  if(list.length === 0) {
-    commentsList.innerHTML = '<div class="small empty">Seja o primeiro a comentar</div>';
-    return;
-  }
-  for (const c of list.slice().reverse()) {
-    const div = document.createElement('div');
-    div.className = 'comment';
-    const date = new Date(c.when);
-    div.innerHTML = `<div style="font-weight:600">${escapeHtml(c.text)}</div><div class="small" style="margin-top:6px">${date.toLocaleString()}</div>`;
-    commentsList.appendChild(div);
-  }
-}
-
-// sanitize minimal
-function escapeHtml(str) {
-  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s]);
-}
-
-// send comment
-sendComment.addEventListener('click', () => {
-  const txt = commentInput.value.trim();
-  if(!txt || !currentVideoId) return;
-  const vid = state.videos.find(v=>v.id===currentVideoId);
-  vid.comments = vid.comments || [];
-  vid.comments.push({text:txt, when:Date.now()});
-  commentInput.value = '';
-  saveState(state);
-  renderComments();
-});
-
-// close modal quando clicar fora
-modal.addEventListener('click', (e) => {
-  if (e.target === modal) closeModal();
-});
-byId('closeModal').addEventListener('click', closeModal);
-
-// busca
-byId('searchBtn').addEventListener('click', () => {
-  renderGrid(byId('searchInput').value);
-});
-byId('searchInput').addEventListener('keyup', (e) => {
-  if (e.key === 'Enter') renderGrid(e.target.value);
-});
-
-// upload simulado
-byId('fileUpload').addEventListener('change', async (ev) => {
-  const f = ev.target.files[0];
-  if(!f) return;
-  const id = uid();
-  const url = URL.createObjectURL(f);
-  // tentar criar miniatura: se for imagem usar direto, se for vídeo criar frame (simples: usar o próprio vídeo como thumb)
-  let thumb = '';
-  if (f.type.startsWith('image/')) {
-    thumb = url;
-  } else {
-    // para simplicidade, deixamos thumb em branco e player usará url
-  }
-
-  const title = prompt('Título do vídeo (curto):', f.name) || f.name;
-  const desc = prompt('Descrição (curta):', 'Vídeo adicionado localmente') || '';
-
-  const videoObj = { id, title, desc, url, thumb, likes:0, comments:[] };
-  state.videos.unshift(videoObj); // adiciona no início
-  saveState(state);
-  renderGrid(byId('searchInput').value);
-  // limpar input para permitir mesmo arquivo novo ser carregado depois
-  ev.target.value = '';
-});
-
-// inicializar grid
-renderGrid('');
-
-// pequena melhoria: limpar localStorage (opcionalmente)
-window.clearMiniTubeData = function() {
-  if (confirm('Limpar todos os dados do MiniTube (vídeos adicionados / likes / comentários)?')) {
-    localStorage.removeItem('minitube_state');
-    location.reload();
-  }
-};
-
-/* Nota:
- - URLs criadas por URL.createObjectURL são temporárias enquanto a aba estiver aberta.
- - Se você recarregar a página, os arquivos adicionados permanecem nas entradas (porque salvamos a URL), 
-   porém algumas vezes navegadores não tornam objetos persistentes entre sessões; se isso acontecer, recarregue e refaça upload.
- - Para usar arquivos locais de forma permanente, coloque-os numa pasta "videos/" e edite state.videos para referenciá-los.
-*/
+  // formulário (simulação / sem servidor)
+  document.getElementById('leadForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const message = document.getElementById('message').value.trim();
+    // Simula envio: salva no localStorage (você pode alterar para enviar ao e-mail real no futuro)
+    const leads = JSON.parse(localStorage.getItem('fenix_leads') || '[]');
+    leads.push({name, phone, message, when: new Date().toISOString()});
+    localStorage.setItem('fenix_leads', JSON.stringify(leads));
+    document.getElementById('leadMsg').textContent = 'Mensagem salva localmente. Iremos entrar em contato em breve.';
+    document.getElementById('leadForm').reset();
+  });
 </script>
+
 </body>
 </html>
